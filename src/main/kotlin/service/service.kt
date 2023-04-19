@@ -3,6 +3,8 @@ package service
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
 import org.json.JSONObject
 import repo.User
 import java.io.BufferedReader
@@ -32,7 +34,7 @@ class Service{
         return users.toString()
     }
 
-    fun handleGet(id: Int?): User?{
+    fun handleGet(id: String?): User?{
         if(id == null){
             return null
         }
@@ -48,30 +50,33 @@ class Service{
     }
     fun handlePost(json: String): String{
         val obj = JSONObject(json)
-        val user = User(UUID.randomUUID(),obj.get("name"),obj.get("email"),obj.get("number"))
+        val user = User(UUID.randomUUID().toString(), obj.get("name") as String, obj.get("email") as String,
+            obj.get("number") as String
+        )
         users.add(user)
-        objectMapper.writeValue(file,users)
-        writer.flush()
+        val jsonserialize = Json.encodeToString(ListSerializer(User.serializer()),users)
+        println(jsonserialize)
+        file.writeText(jsonserialize)
         return user.toString()
     }
-    fun handlePut(id: Int, json: String): User?{
+    fun handlePut(id: String, json: String): User?{
         if(id == null){
             return null
         }
         val obj = JSONObject(json)
-        val user = User(id,obj.get("name"), obj.get("email"), obj.get("number"))
+        val user = User(id, obj.get("name") as String, obj.get("email") as String, obj.get("number") as String)
         users.replaceAll { if (it.id == id) user else it }
-        objectMapper.writeValue(file,users)
-        writer.flush()
+        val jsonserialize = Json.encodeToString(ListSerializer(User.serializer()),users)
+        file.writeText(jsonserialize)
         return user
     }
-    fun handleDelete(id: Int?){
+    fun handleDelete(id: String?){
         if(id == null){
             return
         }
         val user = users.find{it.id == id} ?: return
         users.remove(user)
-        objectMapper.writeValue(file,users)
-        writer.flush()
+        val jsonserialize = Json.encodeToString(ListSerializer(User.serializer()),users)
+        file.writeText(jsonserialize)
     }
 }

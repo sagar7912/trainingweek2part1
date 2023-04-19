@@ -1,9 +1,9 @@
 
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import org.glassfish.jersey.server.ResourceConfig
-import request.MyHttpHandler
+//import request.MyHttpHandler
 import java.net.URI
-val request=MyHttpHandler()
+//val request=MyHttpHandler()
 fun main(args: Array<String>) {
     val baseURI = URI.create("http://localhost:8080/")
     val resourceConfig = ResourceConfig.forApplicationClass(MyApplication::class.java)

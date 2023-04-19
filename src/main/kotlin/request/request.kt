@@ -1,5 +1,6 @@
 package request
 import service.Service
+import java.util.*
 import javax.ws.rs.*
 import javax.ws.rs.core.MediaType
 @Path("users")
@@ -19,7 +20,7 @@ class MyResource {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun handleGetOne(@PathParam("id") id: Int): String {
+    fun handleGetOne(@PathParam("id") id: String): String {
         return service.handleGet(id).toString()
     }
 
@@ -35,13 +36,13 @@ class MyResource {
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    fun handlePut(@PathParam("id")id: Int, user: String): String{
+    fun handlePut(@PathParam("id")id: String, user: String): String{
         return service.handlePut(id, user).toString()
     }
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun handleDelete(@PathParam("id") id: Int): String{
+    fun handleDelete(@PathParam("id") id: String): String{
         service.handleDelete(id)
         return "Deleted"
     }

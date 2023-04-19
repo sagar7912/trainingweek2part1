@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.8.0"
     application
+    kotlin("plugin.serialization") version "1.8.0"
 }
 
 group = "org.example"
@@ -18,6 +19,7 @@ dependencies {
     implementation("org.glassfish.jersey.inject:jersey-hk2:2.34")
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.34")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 
 
     testImplementation(kotlin("test"))
