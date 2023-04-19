@@ -3,6 +3,9 @@ package repo
 import org.json.JSONObject
 
 data class User(val id: Int, val name: Any, val email: Any, val number: Any){
+    companion object{
+        const val id=0
+    }
     constructor(): this(0,"","","")
 
     override fun toString(): String {
