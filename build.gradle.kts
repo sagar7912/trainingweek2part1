@@ -17,6 +17,7 @@ dependencies {
     implementation("org.glassfish.jersey.media:jersey-media-json-jackson:2.34")
     implementation("org.glassfish.jersey.inject:jersey-hk2:2.34")
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.34")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
 
 
     testImplementation(kotlin("test"))

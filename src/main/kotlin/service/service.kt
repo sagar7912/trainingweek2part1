@@ -2,28 +2,28 @@ package service
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.json.JSONObject
 import repo.User
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileReader
 import java.io.FileWriter
-import java.io.IOException
-
+import java.util.*
 class Service{
+    private var file = File("users.txt")
+    private var writer= FileWriter(file,true)
     companion object{
-        var ID =0
         private var users: MutableList<User> = mutableListOf()
-        private val objectMapper = ObjectMapper()
-        var file = File("users.txt")
-        var writer= FileWriter(file,true)
+        private val objectMapper = ObjectMapper().registerModule(KotlinModule())
         init{
 //            users.add(User(ID++, "Sagar", "sagar.sheoran@fretron.com", "7727839857"))
 //            users.add(User(ID++, "Atul", "atul.bhatia@fretron.com", "9999999999"))
-            val objectMapper = ObjectMapper()
-            try {
-                users = objectMapper.readValue(file, object : TypeReference<MutableList<User>>() {})
-            }catch (e: IOException){
-//                file.writeText("")
-            }
+            var file = File("users.txt")
+            var writer= FileWriter(file,true)
+            val bufferedReader = BufferedReader(FileReader(file))
+            var string =file.readText()
+            users = objectMapper.readValue(string,object: TypeReference<MutableList<User>>(){})
         }
     }
 
@@ -48,7 +48,7 @@ class Service{
     }
     fun handlePost(json: String): String{
         val obj = JSONObject(json)
-        val user = User(ID++,obj.get("name"),obj.get("email"),obj.get("number"))
+        val user = User(UUID.randomUUID(),obj.get("name"),obj.get("email"),obj.get("number"))
         users.add(user)
         objectMapper.writeValue(file,users)
         writer.flush()

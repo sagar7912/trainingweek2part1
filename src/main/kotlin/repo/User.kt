@@ -2,7 +2,7 @@ package repo
 
 import org.json.JSONObject
 
-data class User(val id: Int, val name: Any, val email: Any, val number: Any){
+data class User(val id: Any, val name: Any, val email: Any, val number: Any){
     companion object{
         const val id=0
     }
