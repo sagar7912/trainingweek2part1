@@ -1,19 +1,18 @@
-package repo
+package models
 
 import kotlinx.serialization.Serializable
 import org.json.JSONObject
 
 @Serializable
-data class User(val id: String, val name: String, val email: String, val number: String){
-    companion object{
-        const val id=0
-    }
-    constructor(): this("0","","","")
+data class UserModel(var userModelId: String, var name: String, var email: String, var number: String){
+
+    constructor() : this("", "", "", "")
 
     override fun toString(): String {
         val obj = JSONObject()
-        obj.put("id",this.id)
+        obj.put("userModelId",this.userModelId)
         obj.put("name",this.name)
+
         obj.put("email",this.email)
         obj.put("number",this.number)
         return obj.toString()
