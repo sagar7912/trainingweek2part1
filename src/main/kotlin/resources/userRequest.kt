@@ -40,6 +40,7 @@ class MyResource {
     }
 
     @DELETE
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     fun handleDelete(@PathParam("id") id: String): Boolean{
         return service.handleDelete(id)
