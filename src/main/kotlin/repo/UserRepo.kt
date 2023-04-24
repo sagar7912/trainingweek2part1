@@ -1,33 +1,22 @@
 package repo
 import com.google.gson.Gson
+import com.mongodb.client.MongoClients
+import com.mongodb.client.model.Filters.eq
+import com.mongodb.client.model.Updates.combine
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.protobuf.ProtoBuf
 import models.UserModel
-import java.io.File
+import org.bson.Document
 
 class UserRepo {
-    private val file = File("users.bin") //creates or select the given file
-    private val serializer = ListSerializer(UserModel.serializer()) //serializer created for writing objects
-
     @OptIn(ExperimentalSerializationApi::class)
     companion object {
-        val gson = Gson()
-        private var users: MutableList<UserModel> = mutableListOf()
-
-        init {
-            try {
-                val file = File("users.bin")
-                val readByteArray = file.readBytes() //read data in byte form
-                users =
-                    ProtoBuf.decodeFromByteArray(
-                        ListSerializer(UserModel.serializer()),
-                        readByteArray
-                    ).toMutableList() //deserializing the data and storing into user
-            } catch (e: Exception) {
-                e.printStackTrace() // will run into exception if file not created already
-            }
-        }
+        private val mongoClient = MongoClients.create("mongodb://localhost:27017")
+        private val database = mongoClient.getDatabase("mydb")
+        private val collection = database.getCollection("users")
+        private val gson = Gson()
+        private val documents = collection.find().toList()
+        private val jsonArray = documents.joinToString(prefix = "[", separator = ",", postfix = "]") { gson.toJson(it) }
+        var users: MutableList<UserModel> = gson.fromJson(jsonArray, Array<UserModel>::class.java).toMutableList()
     }
 
 
@@ -37,32 +26,34 @@ class UserRepo {
 
 
     fun get(id: String): UserModel? {
-
         return users.firstOrNull { it.userModelId == id }
     }
 
 
     fun post(user: UserModel): UserModel {
         users.add(user)
-        val byteArray = ProtoBuf.encodeToByteArray(serializer, users.toList()) //serialize the users list
-        file.writeBytes(byteArray) //write into file
+        collection.insertOne(Document.parse(user.toString()))
         return user
     }
 
 
-    fun put(user: UserModel): UserModel{
+    fun put(user: UserModel): UserModel {
+        println("!!!")
         users.remove(get(user.userModelId))
         users.add(user)
-        val byteArray = ProtoBuf.encodeToByteArray(serializer, users.toList())
-        file.writeBytes(byteArray)
+        val str = user.userModelId
+        val filter = eq("userModelId", user.userModelId)
+        val update = combine(Document.parse(user.toString()))
+        collection.updateOne(filter, update)
         return user
     }
 
     fun delete(id: String): Boolean {
         val isRemoved = users.removeIf { it.userModelId == id }
         return if (isRemoved) {
-            val byteArray = ProtoBuf.encodeToByteArray(serializer, users.toList())
-            file.writeBytes(byteArray)
+            val filter = eq("userModelId", id)
+            collection.deleteOne(filter)
+            users.remove(get(id))
             true
         } else {
             false

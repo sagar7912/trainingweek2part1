@@ -28,14 +28,14 @@ class MyResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    fun handlePost(user: String): String{
+    fun handlePost(user: String): String {
         return service.handlePost(user).toString()
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    fun handlePut(user: String): String{
+    fun handlePut(user: String): String {
         return service.handlePut(user).toString()
     }
 
