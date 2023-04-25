@@ -19,14 +19,10 @@ dependencies {
     implementation("org.glassfish.jersey.inject:jersey-hk2:2.34")
     implementation("org.glassfish.jersey.containers:jersey-container-grizzly2-http:2.34")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
     implementation("com.google.code.gson:gson:2.8.9")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-protobuf:1.3.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.0")
-    implementation("org.mongodb:mongodb-driver-sync:4.3.1")
+    implementation("org.mongodb:mongodb-driver-sync:4.7.0")
 
     testImplementation(kotlin("test"))
-    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
