@@ -31,7 +31,7 @@ class UserRepo {
 
 
     fun get(id: String): UserModel? {
-        val filter = eq("userModelId", id)
+        val filter = eq("_id", id)
         val document = collection.find(filter).first()
         return gson.fromJson(document.toJson(), UserModel::class.java)
     }
