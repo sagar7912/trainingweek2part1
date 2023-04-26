@@ -2,18 +2,19 @@ package services
 
 import com.google.gson.GsonBuilder
 import models.UserModel
+import org.json.JSONObject
 import repo.UserRepo
 import java.time.LocalDateTime
 import java.util.*
 
 class Service {
 
-    fun handleGetAll(): MutableList<UserModel> {
-        return UserRepo().getAll()
+    fun handleGetAll(limit: Int, offset: Int, json: String): MutableList<UserModel> {
+        return UserRepo().getAllUsers(limit, offset, json)
     }
 
-    fun handleGet(id: String): UserModel? {
-        return UserRepo().get(id)
+    fun handleGet(id: String, json: String): UserModel? {
+        return UserRepo().getUserById(id, json)
     }
 
     fun handlePost(json: String): UserModel? {
@@ -31,10 +32,9 @@ class Service {
             return null
         }
         //check if the email or number already exists in db or not, if yes return null
-        if ((UserRepo().getNumber(user.number) == null) &&
-            (UserRepo().getEmail(user.email) == null)
+        if (UserRepo().getNumberorEmail(Pair(user.number, user.email)) == null
         ) {
-            return UserRepo().post(user)
+            return UserRepo().postNewUser(user)
         }
         return null
     }
@@ -42,22 +42,19 @@ class Service {
     fun handlePut(json: String): UserModel? {
         val gson = GsonBuilder().create()
         val user = gson.fromJson(json, UserModel::class.java)
-        val currUser1 = UserRepo().getEmail(user.email)
-        val currUser2 = UserRepo().getNumber(user.number)
-        if ((currUser1 == user || currUser1 == null) && (currUser2 == null || currUser2 == user)) {
-            user.timeLastUpdated = LocalDateTime.now().toString()
-            return UserRepo().put(user)
+        val currUser = UserRepo().getNumberorEmail(Pair(user.number, user.email))
+        if (currUser != null) {
+            if ((((currUser.userModelId == user.userModelId) || (currUser == null)))) {
+                user.timeLastUpdated = LocalDateTime.now().toString()
+                val mapper = JSONObject(json)
+                var fields = mapper.getJSONArray("fields").toList().map { it.toString() }
+                return UserRepo().updateUser(user, fields)
+            }
         }
         return null
     }
 
     fun handleDelete(id: String): Boolean {
-        val users = handleGetAll()
-        if (users.firstOrNull { it.userModelId == id } == null) {
-            //if user with this userModelId does not exist then return null
-            return false
-        } else {
-            return UserRepo().delete(id)
-        }
+        return UserRepo().removeUser(id)
     }
 }

@@ -14,15 +14,21 @@ class MyResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    fun handleGetAll(): String {
-        return service.handleGetAll().toString()
+    fun handleGetAll(
+        @QueryParam("limit") limit: Int,
+        @QueryParam("offset") offset: Int,
+        @QueryParam("projections") json: String
+    ): String {
+        return service.handleGetAll(limit, offset,json).toString()
     }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    fun handleGetOne(@PathParam("id") id: String): String {
-        return service.handleGet(id).toString()
+    fun handleGetOne(
+        @PathParam("id") id: String, @QueryParam("projections") json: String
+    ): String {
+        return service.handleGet(id, json).toString()
     }
 
     @POST
@@ -36,7 +42,8 @@ class MyResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     fun handlePut(user: String): String {
-        return service.handlePut(user).toString()
+        val user = service.handlePut(user)
+        return user.toString()
     }
 
     @DELETE
