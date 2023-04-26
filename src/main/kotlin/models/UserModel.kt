@@ -6,11 +6,11 @@ data class UserModel(
     var name: String,
     var email: String,
     var number: String,
-    var timeCreated: String,
-    var timeLastUpdated: String
+    var timeCreated: Long,
+    var timeLastUpdated: Long
 ) {
 
-    constructor() : this("", "", "", "", "", "")
+    constructor() : this("", "", "", "", 0, 0)
 
     override fun toString(): String {
         val obj = JSONObject()

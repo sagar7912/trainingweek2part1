@@ -41,8 +41,8 @@ class UserRepo {
         return gson.fromJson(document.toJson(), UserModel::class.java)
     }
 
-    fun getNumberorEmail(data: Pair<String, String>): UserModel? {
-        val filter = or(eq("number", data.first), eq("email", data.second))
+    fun getNumberorEmail(number: String, email: String): UserModel? {
+        val filter = or(eq("number", number), eq("email", email))
         val cursor = collection.find(filter).iterator()
         if (cursor.hasNext()) {
             val doc = cursor.next()

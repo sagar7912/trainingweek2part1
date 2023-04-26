@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import models.UserModel
 import org.json.JSONObject
 import repo.UserRepo
-import java.time.LocalDateTime
 import java.util.*
 
 class Service {
@@ -20,8 +19,8 @@ class Service {
     fun handlePost(json: String): UserModel? {
         val gson = GsonBuilder().create()
         val user = gson.fromJson(json, UserModel::class.java) //map json to userModel
-        user.timeCreated = LocalDateTime.now().toString()
-        user.timeLastUpdated = LocalDateTime.now().toString()
+        user.timeCreated = System.currentTimeMillis()
+        user.timeLastUpdated = System.currentTimeMillis()
         user.userModelId = UUID.randomUUID().toString()
         //pattern matching for verifying correct email address
         val emailPattern = Regex("^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+\$")
@@ -32,7 +31,7 @@ class Service {
             return null
         }
         //check if the email or number already exists in db or not, if yes return null
-        if (UserRepo().getNumberorEmail(Pair(user.number, user.email)) == null
+        if (UserRepo().getNumberorEmail(user.number, user.email) == null
         ) {
             return UserRepo().postNewUser(user)
         }
@@ -42,10 +41,10 @@ class Service {
     fun handlePut(json: String): UserModel? {
         val gson = GsonBuilder().create()
         val user = gson.fromJson(json, UserModel::class.java)
-        val currUser = UserRepo().getNumberorEmail(Pair(user.number, user.email))
+        val currUser = UserRepo().getNumberorEmail(user.number, user.email)
         if (currUser != null) {
-            if ((((currUser.userModelId == user.userModelId) || (currUser == null)))) {
-                user.timeLastUpdated = LocalDateTime.now().toString()
+            if (((currUser.userModelId == user.userModelId) || (currUser == null))) {
+                user.timeLastUpdated = System.currentTimeMillis()
                 val mapper = JSONObject(json)
                 var fields = mapper.getJSONArray("fields").toList().map { it.toString() }
                 return UserRepo().updateUser(user, fields)
